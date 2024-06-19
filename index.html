@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GD&T FCF Generator</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script>
+        
+    </script>
+</head>
+<body>
+    <div class="container">
+            <h1>Y14.5 - Feature Control Frame Generator</h1>
+        <div class="content">
+            <div class="row">
+                <label for="symbol">Geometric Characteristic:</label>
+                <select id="symbol" onchange="updateSymbolOutput()" style="margin-right: 150px; font-size: 25px;">
+                    <option value="Select Geometric Characteristic Symbols from list.">Symbols</option>
+                    <option value="{&#186;_|">{&#186;_} Profile of a Surface</option>
+                    <option value="{&#191;_|">{&#191;_} Position</option>
+                    <option value="{&#178;_|">{&#178;_} Angularity</option>
+                    <option value="{&#181;_|">{&#181;_} Cylendricity</option>
+                    <option value="{&#182;_|">{&#182;_} Straightness</option>
+                    <option value="{&#183;_|">{&#183;_} Parallelism</option>
+                    <option value="{&#184;_|">{&#184;_} Flatness</option>
+                    <option value="{&#185;_|">{&#185;_} Profile of a Line</option>
+                    <option value="{&#187;_|">{&#187;_} Symmetry</option>
+                    <option value="{&#188;_|">{&#188;_} Perpendicularity</option>
+                    <option value="{&#189;_|">{&#189;_} Runout</option>
+                    <option value="{&#190;_|">{&#190;_} Total Runout</option>
+                </select>
+                <button href="/composite" onclick="displayMessage()">Composite FCF</button>
+                </div>
+                <script>
+                    function displayMessage() {
+                      alert("Work in Progress: Update Coming Soon!");
+                    }
+                  </script>
+        <div class="container">
+            <div class="grid">
+                <!-- First row of characters -->
+                <div class="row">
+                    <div>
+                        <p id="MsgDisplay">Tolerance:</p>
+                        </div>
+                    <button>Ø_</button><button>0`</button><button>1`</button><button>2`</button><button>3`</button><button>4`</button>
+                    <button>5`</button><button>6`</button><button>7`</button><button>8`</button><button>9`</button>
+                    <button>.`</button><button>Ó~</button><button>Î~</button><button>Ò~</button>
+                </div>
+                <!-- Second row of characters -->
+                <div class="row">
+                    <div>
+                        <p id="MsgDisplay">Modifiers:</p>
+                        </div>
+                    <button>&#204;~</button><button>&#203;~</button><button>&#209;~</button><button>&#200;~</button><button>&#196;~</button>
+                    <button>&#197;~</button><button>&#199;~</button><button>&#194;~</button><button>&#198;~</button><button>&#240;~</button>
+                    <button>&#227;~</button><button>&#161;~</button><button>&#212;~</button><button>&#172;~</button><button>&#219;~</button>
+                </div>
+
+                <div class="row">
+                    <p id="MsgDisplay">Characters:</p>
+                    <button>&#91;`</button><button>]`</button><button>Ö~</button><button>É~</button><button>Õ~</button>
+                    <button>®~</button><button>±`</button><button>/`</button><button>-`</button><button>Ü~</button>
+                    <button>Ú~</button><button>À~</button><button>Á~</button><button>^`</button><button>*`</button>
+                </div>
+
+                <div class="row">
+                    <p id="MsgDisplay">FCF Components:</p>
+                    <button>à</button><button>|</button><button>è</button><button>(`</button><button>)`</button>
+                    <button>°`</button><button>ü</button><button>ý</button><button> \</button><button>¥</button>
+                    <button>Ï</button><button>+`</button><button>Í</button><button>}</button><button>{</button>
+                </div>
+            <!-- Add more rows as needed -->
+        </div>
+        <div class="controls">
+            <button id="clear">Clear</button>
+            <button id="changeColorButton">Change Color</button>
+            <button id="copyPngImg">Copy PNG Img</button>
+        </div>
+        <textarea id="featureControlFrame" placeholder="Feature Control Frame:"></textarea>
+        <script>
+            document.getElementById('featureControlFrame').addEventListener('input', function(event) {
+                const textarea = event.target;
+                const cursorPosition = textarea.selectionStart;
+        
+                // Get the current value of the textarea
+                let value = textarea.value;
+        
+                // Insert underscore after the character at cursor position
+                value = value.slice(0, cursorPosition) + '_' + value.slice(cursorPosition);
+        
+                // Update the textarea value with modified value
+                textarea.value = value;
+        
+                // Move cursor position after the underscore
+                textarea.selectionStart = textarea.selectionEnd = cursorPosition + 1;
+            });
+        
+            document.getElementById('featureControlFrame').addEventListener('keydown', function(event) {
+                const textarea = event.target;
+        
+                // Check if backspace key is pressed
+                if (event.key === 'Backspace') {
+                    const cursorPosition = textarea.selectionStart;
+        
+                    // Get the current value of the textarea
+                    let value = textarea.value;
+        
+                    // Remove the character before the cursor position
+                    value = value.slice(0, cursorPosition - 1) + value.slice(cursorPosition);
+        
+                    // Update the textarea value with modified value
+                    textarea.value = value;
+        
+                    // Move cursor position one character back
+                    textarea.selectionStart = textarea.selectionEnd = cursorPosition - 1;
+        
+                    // Prevent the default backspace behavior (like navigating back in browser)
+                    event.preventDefault();
+                }
+            });
+        </script>
+        
+        <footer>
+            <h1>Instructions:</h1>
+            <ol>
+                <li>Select the desired geometric characteristic from the drop-down menu.</li>
+                <li>Type tolerances,datum alphabates using capital letters in the designated text area above &#128070;.</li>
+                <li>Utilize the provided buttons to add separators, initiate, conclude & add special characters in FCF.</li>
+                <li>User may also use curly braces'{}' to initiate and conclude FCF & vertical bar "|" to create box separator. </li>
+                <li>clicking the change color button will cycle the text color in the textarea through red, blue, and black.</li>
+                <li>When satisfied, click the "Copy PNG Img" button to copy the image to your clipboard.</li>
+                
+            </ol>
+          
+            <div class="notes">
+              <p>Important Notes:</p>
+              <ol>
+                <li>Tip: When adding a character, use a single backspace afterward to remove the top and bottom lines, and type '_'(underscore) after the character to restore/add them.</li>
+                <li>This website is not optimized for mobile screens and may not display correctly.</li>
+                <li>Exercise caution: the generator allows creation of feature control frames that may violate GD&T standards.</li>
+              </ol>
+            </div>
+          
+            <div class="footer-link">
+              <a href="https://www.linkedin.com/in/-tbhatt1/">Connect with me on LinkedIn</a>
+              <p class="creator">Created by: Tapan Bhatt</p>
+              <p class="small-text">Font used: <a href="https://www.fontspace.com/micronus" target="_blank">Micronus on FontSpace</a></p>
+            </div>
+          </footer>
+            </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
