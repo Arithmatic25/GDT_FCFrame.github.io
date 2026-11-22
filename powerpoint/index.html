@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Create precise single, composite, and stacked GD&T feature control frames, and copy crisp PNG graphics.">
+  <meta name="theme-color" content="#12364a">
+  <title>FrameLab for PowerPoint</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=18">
+  <script defer src="script.js?v=22"></script>
+  <link rel="stylesheet" href="task-pane.css?v=5">
+  <script defer src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script defer src="task-pane.js"></script>
+</head>
+<body class="task-pane">
+  <a class="skip-link" href="#main-content">Skip to workspace</a>
+
+  <header class="app-header">
+    <a class="brand" href="#generator" aria-label="FrameLab generator">
+      <span class="brand-mark" aria-hidden="true" data-symbol-icon="position"></span>
+      <strong>FrameLab</strong>
+    </a>
+
+    <div class="header-tools">
+      <label class="unit-switcher">
+        <span class="sr-only">Working units</span>
+        <select id="units" aria-label="Working units">
+          <option value="mm">mm</option>
+          <option value="in">inch</option>
+        </select>
+      </label>
+      <label class="template-picker">
+        <span class="sr-only">Load a template</span>
+        <select id="template-picker">
+          <option value="">Templates</option>
+          <option value="position">Position</option>
+          <option value="composite">Composite pattern</option>
+          <option value="stacked">Stacked controls</option>
+          <option value="profile">Surface profile</option>
+          <option value="flatness">Flatness</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main id="main-content" class="workspace">
+    <section id="generator" class="page-section">
+      <div class="builder-layout">
+        <section class="panel preview-panel" aria-labelledby="preview-title">
+          <div class="panel-heading preview-heading">
+            <div><h2 id="preview-title">Live preview</h2></div>
+            <div class="view-tools" aria-label="Preview controls">
+              <div class="swatches" role="group" aria-label="Frame color">
+                <button class="swatch" type="button" data-color="#142c39" style="--swatch:#142c39" aria-label="Dark navy frame"></button>
+                <button class="swatch is-active" type="button" data-color="#ef4035" style="--swatch:#ef4035" aria-label="Red frame"></button>
+                <button class="swatch" type="button" data-color="#176b8f" style="--swatch:#176b8f" aria-label="Blue frame"></button>
+                <label class="custom-color" title="Custom frame color"><span class="sr-only">Custom color</span><input id="frame-color" type="color" value="#ef4035"></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="drawing-board" id="drawing-board">
+            <div class="grid-paper" aria-hidden="true"></div>
+            <div id="frame-preview" class="frame-preview" aria-label="Generated feature control frame"></div>
+          </div>
+
+          <div class="export-grid">
+            <button id="insert-slide" class="primary-button insert-slide" type="button" aria-label="Insert into slide" title="Insert into slide" hidden>Insert</button>
+            <button id="copy-png" class="export-button" type="button">Copy PNG</button>
+            <label class="check-control"><input id="transparent-bg" type="checkbox"> Transparent</label>
+          </div>
+
+          <p id="toast" class="toast" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="panel editor-panel" aria-labelledby="editor-title">
+          <h2 id="editor-title" class="sr-only">Frame definition</h2>
+          <div class="frame-options">
+            <fieldset class="mode-fieldset">
+              <legend class="sr-only">Frame structure</legend>
+              <div class="segmented" role="group" aria-label="Frame structure">
+                <button type="button" class="is-active" data-mode="single" aria-pressed="true"><span>Single</span></button>
+                <button type="button" data-mode="composite" aria-pressed="false"><span>Composite</span></button>
+                <button type="button" data-mode="stacked" aria-pressed="false"><span>Stacked</span></button>
+              </div>
+            </fieldset>
+            <button id="reset-frame" class="text-button" type="button">Reset</button>
+          </div>
+
+          <div class="editor-actions" id="row-actions" hidden>
+            <label>
+              <span class="sr-only">Row to edit</span>
+              <select id="edit-row"></select>
+            </label>
+            <button id="add-row" class="secondary-button" type="button">+ Row</button>
+            <button id="remove-row" class="secondary-button" type="button">Remove</button>
+          </div>
+
+          <div id="row-editors" class="row-editors"></div>
+
+          <section class="annotation-editor" aria-labelledby="annotation-title">
+            <div class="annotation-grid">
+              <label class="field">
+                <span id="annotation-title">Annotation</span>
+                <select id="annotation-type">
+                  <option value="none">None</option>
+                  <option value="free">Free text</option>
+                  <option value="boxed">Boxed text</option>
+                  <option value="datum">Datum flag</option>
+                  <option value="datum-target">Datum target</option>
+                </select>
+              </label>
+              <label class="field annotation-text-field" hidden>
+                <span id="annotation-text-label">Annotation text</span>
+                <input id="annotation-text" maxlength="60" value="" placeholder="Add a drawing note">
+              </label>
+              <label class="field annotation-target-size-field" hidden>
+                <span>Target size</span>
+                <span class="target-size-control">
+                  <select id="annotation-target-prefix" aria-label="Datum target size prefix">
+                    <option value="diameter">⌀</option>
+                    <option value="none">No prefix</option>
+                  </select>
+                  <input id="annotation-target-size" maxlength="20" inputmode="decimal" value="10" placeholder="10">
+                </span>
+              </label>
+              <label class="field annotation-placement-field" hidden>
+                <span>Placement</span>
+                <select id="annotation-placement">
+                  <option value="above">Above frame</option>
+                  <option value="below" selected>Below frame</option>
+                </select>
+              </label>
+            </div>
+            <label class="annotation-only-control" hidden>
+              <input id="annotation-only" type="checkbox">
+              <strong>Annotation only</strong>
+            </label>
+          </section>
+        </section>
+      </div>
+    </section>
+
+  </main>
+
+  <noscript><p class="noscript">FrameLab needs JavaScript enabled to build and export feature control frames.</p></noscript>
+</body>
+</html>
+

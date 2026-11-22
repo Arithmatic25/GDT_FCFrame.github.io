@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xsi:type="TaskPaneApp">
+  <Id>86e5eaaf-c745-4d95-92e5-e0885ec14f19</Id>
+  <Version>1.1.0.0</Version>
+  <ProviderName>FrameLab</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="FrameLab"/>
+  <Description DefaultValue="Build and insert GD&amp;T feature control frames."/>
+  <IconUrl DefaultValue="https://arithmatic25.github.io/GDT_FCFrame.github.io/powerpoint/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://arithmatic25.github.io/GDT_FCFrame.github.io/powerpoint/icon-80.png"/>
+  <Hosts><Host Name="Presentation"/></Hosts>
+  <DefaultSettings><SourceLocation DefaultValue="https://arithmatic25.github.io/GDT_FCFrame.github.io/powerpoint/"/></DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts><Host xsi:type="Presentation"><DesktopFormFactor>
+      <FunctionFile resid="Pane.Url"/>
+      <ExtensionPoint xsi:type="PrimaryCommandSurface"><OfficeTab id="TabHome">
+        <Group id="FrameLab.Group">
+          <Label resid="Group.Label"/>
+          <Icon><bt:Image size="16" resid="Icon16"/><bt:Image size="32" resid="Icon32"/><bt:Image size="80" resid="Icon80"/></Icon>
+          <Control xsi:type="Button" id="FrameLab.Open">
+            <Label resid="Button.Label"/>
+            <Supertip><Title resid="Button.Label"/><Description resid="Button.Description"/></Supertip>
+            <Icon><bt:Image size="16" resid="Icon16"/><bt:Image size="32" resid="Icon32"/><bt:Image size="80" resid="Icon80"/></Icon>
+            <Action xsi:type="ShowTaskpane"><TaskpaneId>FrameLab.Panel</TaskpaneId><SourceLocation resid="Pane.Url"/></Action>
+          </Control>
+        </Group>
+      </OfficeTab></ExtensionPoint>
+    </DesktopFormFactor></Host></Hosts>
+    <Resources>
+      <bt:Images><bt:Image id="Icon16" DefaultValue="https://arithmatic25.github.io/GDT_FCFrame.github.io/powerpoint/icon-16.png"/><bt:Image id="Icon32" DefaultValue="https://arithmatic25.github.io/GDT_FCFrame.github.io/powerpoint/icon-32.png"/><bt:Image id="Icon80" DefaultValue="https://arithmatic25.github.io/GDT_FCFrame.github.io/powerpoint/icon-80.png"/></bt:Images>
+      <bt:Urls><bt:Url id="Pane.Url" DefaultValue="https://arithmatic25.github.io/GDT_FCFrame.github.io/powerpoint/"/></bt:Urls>
+      <bt:ShortStrings><bt:String id="Group.Label" DefaultValue="FrameLab"/><bt:String id="Button.Label" DefaultValue="Open FrameLab"/></bt:ShortStrings>
+      <bt:LongStrings><bt:String id="Button.Description" DefaultValue="Open the FrameLab controls and live preview."/></bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
