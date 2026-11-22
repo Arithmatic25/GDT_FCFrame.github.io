@@ -8,8 +8,8 @@
   <title>FrameLab for PowerPoint</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=18">
-  <script defer src="script.js?v=22"></script>
-  <link rel="stylesheet" href="task-pane.css?v=5">
+  <script defer src="script.js?v=23"></script>
+  <link rel="stylesheet" href="task-pane.css?v=6">
   <script defer src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
   <script defer src="task-pane.js"></script>
 </head>
@@ -51,11 +51,11 @@
           <div class="panel-heading preview-heading">
             <div><h2 id="preview-title">Live preview</h2></div>
             <div class="view-tools" aria-label="Preview controls">
-              <div class="swatches" role="group" aria-label="Frame color">
-                <button class="swatch" type="button" data-color="#142c39" style="--swatch:#142c39" aria-label="Dark navy frame"></button>
-                <button class="swatch is-active" type="button" data-color="#ef4035" style="--swatch:#ef4035" aria-label="Red frame"></button>
-                <button class="swatch" type="button" data-color="#176b8f" style="--swatch:#176b8f" aria-label="Blue frame"></button>
-                <label class="custom-color" title="Custom frame color"><span class="sr-only">Custom color</span><input id="frame-color" type="color" value="#ef4035"></label>
+              <div class="swatches" role="group" aria-label="Frame fill">
+                <button class="swatch is-active" type="button" data-preset="hes" title="Orange gradient" aria-pressed="true">HES</button>
+                <button class="swatch" type="button" data-preset="dwg" title="Gray gradient" aria-pressed="false">DWG</button>
+                <button class="swatch" type="button" data-preset="oth" title="Black fill with white lettering" aria-pressed="false">OTH</button>
+                <label class="custom-color" title="Custom gradient fill"><span class="sr-only">Custom gradient color</span><input id="frame-color" type="color" value="#ed963f"></label>
               </div>
             </div>
           </div>

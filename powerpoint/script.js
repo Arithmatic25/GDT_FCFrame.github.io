@@ -55,7 +55,8 @@ function initialState() {
     mode: 'single',
     rows: [row({ symbol: 'surface-profile', zone: 'none', tolerance: '1.0' })],
     annotation: { type: 'none', text: '', targetSize: '10', targetDiameter: true, placement: 'below', only: false },
-    color: '#ef4035',
+    fillPreset: 'hes',
+    color: '#ed963f',
     transparent: false,
 
     units: 'mm'
@@ -164,7 +165,10 @@ function normalizeSharedState(candidate) {
     placement: ['above', 'below'].includes(annotation.placement) ? annotation.placement : 'below',
     only: Boolean(annotation.only) && annotationType !== 'none'
   };
-  if (candidate.color) normalized.color = cleanColor(candidate.color);
+  if (candidate.color) {
+    normalized.color = cleanColor(candidate.color);
+    normalized.fillPreset = 'custom';
+  }
   normalized.transparent = Boolean(candidate.transparent);
 
   normalized.units = candidate.units === 'in' ? 'in' : 'mm';
@@ -663,12 +667,33 @@ function previewNumberButton(content, key, label) {
   return `<g data-preview-number="${key}" role="button" tabindex="0" aria-label="${escapeXml(label)}">${content}</g>`;
 }
 
+function customGradientStops(color) {
+  const rgb = color.slice(1).match(/../g).map((channel) => parseInt(channel, 16));
+  const mix = (channel, white, strength) =>
+    Math.round(channel * strength + 255 * white).toString(16).padStart(2, '0');
+  return [
+    `#${rgb.map((channel) => mix(channel, 0.72, 0.28)).join('')}`,
+    `#${rgb.map((channel) => mix(channel, 0.46, 0.48)).join('')}`
+  ];
+}
+
+function frameGradient(height) {
+  const stops = {
+    hes: ['#fff0d9', '#f49b40'],
+    dwg: ['#f2f3f5', '#a7abb1']
+  }[state.fillPreset] ?? customGradientStops(state.color);
+
+  return `<defs><linearGradient id="fcf-fill" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${height}"><stop offset="0%" stop-color="${stops[0]}"/><stop offset="100%" stop-color="${stops[1]}"/></linearGradient></defs>`;
+}
+
 function buildFrameSvg(interactive = false) {
   const cellHeight = FCF_METRICS.frameHeight;
   const gap = 0;
   const pad = FCF_METRICS.border / 2;
-  const color = cleanColor(state.color);
-  const cellFill = state.transparent ? 'none' : '#ffffff';
+  const solidBlack = state.fillPreset === 'oth';
+  const color = solidBlack ? '#ffffff' : '#000000';
+  const cellFill = solidBlack ? '#000000' : 'url(#fcf-fill)';
+  const annotationFill = state.transparent ? 'none' : '#ffffff';
   let content = '';
   let maxRight = 0;
   let maxBottom = 0;
@@ -679,7 +704,7 @@ function buildFrameSvg(interactive = false) {
     const edgePad = ['boxed', 'datum'].includes(state.annotation.type) ? FCF_METRICS.border / 2 : 0;
     const width = metrics.width + edgePad * 2;
     const height = metrics.height + edgePad * 2;
-    const annotationContent = drawAnnotationSvg(state.annotation.type, text, edgePad, edgePad, metrics.width, metrics.height, color, cellFill, state.annotation.placement, interactive);
+    const annotationContent = drawAnnotationSvg(state.annotation.type, text, edgePad, edgePad, metrics.width, metrics.height, '#000000', annotationFill, state.annotation.placement, interactive);
     const background = state.transparent ? '' : `<rect width="${width}" height="${height}" fill="#fff"/>`;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="${interactive ? 'group' : 'img'}" aria-labelledby="frame-title"><title id="frame-title">${escapeXml(frameDescription())}</title>${background}${annotationContent}</svg>`;
     return { svg, width, height };
@@ -748,16 +773,16 @@ function buildFrameSvg(interactive = false) {
     if (state.annotation.placement === 'above') {
       frameOffsetY = metrics.height + gap;
       height = frameHeight + frameOffsetY;
-      annotationContent = drawAnnotationSvg(state.annotation.type, text, (width - metrics.width) / 2, 0, metrics.width, metrics.height, color, cellFill, 'above', interactive);
+      annotationContent = drawAnnotationSvg(state.annotation.type, text, (width - metrics.width) / 2, 0, metrics.width, metrics.height, '#000000', annotationFill, 'above', interactive);
     } else {
       height = frameHeight + gap + metrics.height;
-      annotationContent = drawAnnotationSvg(state.annotation.type, text, (width - metrics.width) / 2, frameHeight + gap, metrics.width, metrics.height, color, cellFill, 'below', interactive);
+      annotationContent = drawAnnotationSvg(state.annotation.type, text, (width - metrics.width) / 2, frameHeight + gap, metrics.width, metrics.height, '#000000', annotationFill, 'below', interactive);
     }
   }
 
   const background = state.transparent ? '' : `<rect width="${width}" height="${height}" fill="#fff"/>`;
   const frameContent = frameOffsetX || frameOffsetY ? `<g transform="translate(${frameOffsetX} ${frameOffsetY})">${content}</g>` : content;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="${interactive ? 'group' : 'img'}" aria-labelledby="frame-title"><title id="frame-title">${escapeXml(frameDescription())}</title>${background}${frameContent}${annotationContent}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="${interactive ? 'group' : 'img'}" aria-labelledby="frame-title"><title id="frame-title">${escapeXml(frameDescription())}</title>${solidBlack ? '' : frameGradient(frameHeight)}${background}${frameContent}${annotationContent}</svg>`;
   return { svg, width, height };
 }
 
@@ -788,7 +813,12 @@ function renderPreview() {
 
   els.transparent.checked = state.transparent;
   els.color.value = state.color;
-  $$('.swatch').forEach((button) => button.classList.toggle('is-active', button.dataset.color.toLowerCase() === state.color.toLowerCase()));
+  $$('[data-preset]').forEach((button) => {
+    const active = button.dataset.preset === state.fillPreset;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  els.color.closest('.custom-color').classList.toggle('is-active', state.fillPreset === 'custom');
 }
 
 function showToast(message, isError = false) {
@@ -1011,8 +1041,19 @@ $('#remove-row').addEventListener('click', () => {
   els.editRow.focus();
 });
 
-$$('.swatch').forEach((button) => button.addEventListener('click', () => { state.color = cleanColor(button.dataset.color); renderPreview(); }));
-els.color.addEventListener('input', () => { state.color = cleanColor(els.color.value); renderPreview(); });
+$$('[data-preset]').forEach((button) => button.addEventListener('click', () => {
+  state.fillPreset = button.dataset.preset;
+  renderPreview();
+}));
+els.color.addEventListener('click', () => {
+  state.fillPreset = 'custom';
+  renderPreview();
+});
+els.color.addEventListener('input', () => {
+  state.color = cleanColor(els.color.value);
+  state.fillPreset = 'custom';
+  renderPreview();
+});
 
 els.transparent.addEventListener('change', () => { state.transparent = els.transparent.checked; renderPreview(); });
 els.units.addEventListener('change', () => convertUnits(els.units.value));
