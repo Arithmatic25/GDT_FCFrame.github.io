@@ -50,13 +50,21 @@ function row(overrides = {}) {
   };
 }
 
+const FRAME_FILLS = {
+  hes: '#ffbf45',
+  dwg: '#d0d2d5',
+  oth: '#000000',
+  adc: '#ee718a',
+  ega: '#ffffff'
+};
+
 function initialState() {
   return {
     mode: 'single',
     rows: [row({ symbol: 'surface-profile', zone: 'none', tolerance: '1.0' })],
     annotation: { type: 'none', text: '', targetSize: '10', targetDiameter: true, placement: 'below', only: false },
     fillPreset: 'hes',
-    color: '#ed963f',
+    color: FRAME_FILLS.hes,
     transparent: false,
 
     units: 'mm'
@@ -667,32 +675,13 @@ function previewNumberButton(content, key, label) {
   return `<g data-preview-number="${key}" role="button" tabindex="0" aria-label="${escapeXml(label)}">${content}</g>`;
 }
 
-function customGradientStops(color) {
-  const rgb = color.slice(1).match(/../g).map((channel) => parseInt(channel, 16));
-  const mix = (channel, white, strength) =>
-    Math.round(channel * strength + 255 * white).toString(16).padStart(2, '0');
-  return [
-    `#${rgb.map((channel) => mix(channel, 0.72, 0.28)).join('')}`,
-    `#${rgb.map((channel) => mix(channel, 0.46, 0.48)).join('')}`
-  ];
-}
-
-function frameGradient(height) {
-  const stops = {
-    hes: ['#fff0d9', '#f49b40'],
-    dwg: ['#f2f3f5', '#a7abb1']
-  }[state.fillPreset] ?? customGradientStops(state.color);
-
-  return `<defs><linearGradient id="fcf-fill" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${height}"><stop offset="0%" stop-color="${stops[0]}"/><stop offset="100%" stop-color="${stops[1]}"/></linearGradient></defs>`;
-}
-
 function buildFrameSvg(interactive = false) {
   const cellHeight = FCF_METRICS.frameHeight;
   const gap = 0;
   const pad = FCF_METRICS.border / 2;
   const solidBlack = state.fillPreset === 'oth';
   const color = solidBlack ? '#ffffff' : '#000000';
-  const cellFill = solidBlack ? '#000000' : 'url(#fcf-fill)';
+  const cellFill = FRAME_FILLS[state.fillPreset] ?? state.color;
   const annotationFill = state.transparent ? 'none' : '#ffffff';
   let content = '';
   let maxRight = 0;
@@ -782,7 +771,7 @@ function buildFrameSvg(interactive = false) {
 
   const background = state.transparent ? '' : `<rect width="${width}" height="${height}" fill="#fff"/>`;
   const frameContent = frameOffsetX || frameOffsetY ? `<g transform="translate(${frameOffsetX} ${frameOffsetY})">${content}</g>` : content;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="${interactive ? 'group' : 'img'}" aria-labelledby="frame-title"><title id="frame-title">${escapeXml(frameDescription())}</title>${solidBlack ? '' : frameGradient(frameHeight)}${background}${frameContent}${annotationContent}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="${interactive ? 'group' : 'img'}" aria-labelledby="frame-title"><title id="frame-title">${escapeXml(frameDescription())}</title>${background}${frameContent}${annotationContent}</svg>`;
   return { svg, width, height };
 }
 
@@ -1041,10 +1030,14 @@ $('#remove-row').addEventListener('click', () => {
   els.editRow.focus();
 });
 
-$$('[data-preset]').forEach((button) => button.addEventListener('click', () => {
-  state.fillPreset = button.dataset.preset;
-  renderPreview();
-}));
+$$('[data-preset]').forEach((button) => {
+  const preset = button.dataset.preset;
+  button.style.setProperty('--swatch', FRAME_FILLS[preset]);
+  button.addEventListener('click', () => {
+    state.fillPreset = preset;
+    renderPreview();
+  });
+});
 els.color.addEventListener('click', () => {
   state.fillPreset = 'custom';
   renderPreview();

@@ -38,10 +38,18 @@ html:has(body.task-pane) { min-width: 248px; }
 .task-pane .swatches { gap: 4px; padding: 0 2px; border: 0; background: transparent; }
 .task-pane .swatch, .task-pane .custom-color { height: 23px; border-radius: 4px; }
 .task-pane .custom-color { width: 23px; }
-.task-pane .swatch { width: auto; padding: 0 3px; font-size: .6875rem; font-weight: 750; color: #000; }
-.task-pane [data-preset="hes"] { background: linear-gradient(#fff0d9, #f49b40); }
-.task-pane [data-preset="dwg"] { background: linear-gradient(#f2f3f5, #a7abb1); }
-.task-pane [data-preset="oth"] { background: #000; color: #fff; }
+.task-pane .swatch { width: auto; padding: 0 3px; border: 1px solid rgb(0 0 0 / 18%); font-size: .6875rem; font-weight: 750; color: #000; }
+.task-pane [data-preset="oth"] { color: #fff; }
+@media (max-width: 290px) {
+  .task-pane .preview-heading { justify-content: flex-end; }
+  .task-pane .preview-heading > div:first-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
 .task-pane .custom-color.is-active, .task-pane .custom-color:focus-within { outline: 2px solid #79a8b8; outline-offset: 2px; }
 .task-pane .swatch::after { inset: -2px; border-radius: 6px; }
 .task-pane .drawing-board { min-height: 46px; border-radius: 6px; }
