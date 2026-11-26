@@ -51,7 +51,7 @@ function row(overrides = {}) {
 }
 
 const FRAME_FILLS = {
-  hes: '#ffbf45',
+  hes: '#ffd447',
   dwg: '#d0d2d5',
   oth: '#000000',
   adc: '#ee718a',
